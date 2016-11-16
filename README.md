@@ -1,1 +1,1 @@
-This is a test project written in Java for a srinkler system.
+This is a test project written in Java for a home garden sprinkler system.
