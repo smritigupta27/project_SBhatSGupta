@@ -14,7 +14,14 @@ import java.awt.Color;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
+
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class MainWindow {
 
@@ -77,16 +84,36 @@ public class MainWindow {
 		
 		JPanel blankPanel = new JPanel();
 		blankPanel.setBackground(Color.BLACK);
-		mainPanel.add(blankPanel);
+		mainPanel.add(blankPanel, "blankPanel");
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		mainPanel.add(tabbedPane);
+		mainPanel.add(tabbedPane, "tabbedPane");
+		
+		onOffButton.addActionListener(new ActionListener() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			CardLayout cd = (CardLayout) mainPanel.getLayout();
+			if(e.getActionCommand().equalsIgnoreCase("On")){
+				cd.show(mainPanel, "tabbedPane");
+				onOffButton.setText("OFF");
+			}
+			else{
+				cd.show(mainPanel, "blankPanel");
+				onOffButton.setText("On");
+			}
+		}
+	});
+	
 		
 		JPanel viewGardenPanel = new JPanel();
 		tabbedPane.addTab("View Garden", null, viewGardenPanel, null);
 		tabbedPane.setEnabledAt(0, true);
 		
 		JPanel programSprinklerPanel = new JPanel();
+		//programSprinklerPanel.addContainerListener( new ContainerListener() {
+			
+		
 		tabbedPane.addTab("Program", null, programSprinklerPanel, null);
 		programSprinklerPanel.setLayout(new BorderLayout(0, 0));
 		
@@ -164,6 +191,12 @@ public class MainWindow {
 		JPanel checkWaterConsumptionPanel = new JPanel();
 		checkWaterConsumptionPanel.setToolTipText("View Water Consumption data");
 		tabbedPane.addTab("Water Report", null, checkWaterConsumptionPanel, null);
+		
+		tabbedPane.addChangeListener(new ChangeListener() {
+	        public void stateChanged(ChangeEvent e) {
+	            System.out.println("Tab: " + tabbedPane.getSelectedIndex() + "has been selected");
+	        }
+	    });
 		
 	}
 
