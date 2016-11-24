@@ -1,47 +1,82 @@
 package bhat.gupta.hummingbee.controller;
 
+import bhat.gupta.hummingbee.model.Garden;
 import bhat.gupta.hummingbee.model.Sprinkler;
 import bhat.gupta.hummingbee.model.Zone;
 
 public class GardenController {
-	Sprinkler sp1, sp2, sp3, sp4, sp5, sp6, sp7, sp8, sp9, 
-				sp10, sp11, sp12, sp13, sp14, sp15, sp16;
-	Zone zoneEast, zoneWest, zoneNorth, zoneSouth;
-	static final int NUMBER_OF_SPRINKLERS = 16;
+	
+	Garden garden;
+//	Sprinkler east_sp1, east_sp2, east_sp3, east_sp4, west_sp1, west_sp2, west_sp3, west_sp4, north_sp1, 
+//	north_sp2, north_sp3, north_sp4, south_sp1, south_sp2, south_sp3, south_sp4;
+//	Zone zoneEast, zoneWest, zoneNorth, zoneSouth;
+	//static final int NUMBER_OF_SPRINKLERS = 16;
 	
 
-		public GardenController(){
+		public GardenController(Garden garden){
+		
 		//Initialize sprinklers and zones
+		this.garden =garden;
 		
-		sp1 = new Sprinkler("SP1");
-		sp2 = new Sprinkler("SP2");
-		sp3 = new Sprinkler("SP3");
-		sp4 = new Sprinkler("SP4");
+		Sprinkler east_sp1 = new Sprinkler("E1",true);
+		Sprinkler east_sp2 = new Sprinkler("E2",true);
+		Sprinkler east_sp3 = new Sprinkler("E3",true);
+		Sprinkler east_sp4 = new Sprinkler("E4",false);
 		
-		sp5 = new Sprinkler("SP5");
-		sp6 = new Sprinkler("SP6");
-		sp7 = new Sprinkler("SP7");
-		sp8 = new Sprinkler("SP8");
+		Sprinkler west_sp1 = new Sprinkler("W1",true);
+		Sprinkler west_sp2 = new Sprinkler("W2",false);
+		Sprinkler west_sp3 = new Sprinkler("W3",true);
+		Sprinkler west_sp4 = new Sprinkler("W4",true);
 		
-		sp9 = new Sprinkler("SP9");
-		sp10 = new Sprinkler("SP10");
-		sp11 = new Sprinkler("SP11");
-		sp12 = new Sprinkler("SP12");
+		Sprinkler north_sp1 = new Sprinkler("N1",true);
+		Sprinkler north_sp2 = new Sprinkler("N2",true);
+		Sprinkler north_sp3 = new Sprinkler("N3",true);
+		Sprinkler north_sp4 = new Sprinkler("N4",true);
 		
-		sp13 = new Sprinkler("SP13");
-		sp14 = new Sprinkler("SP14");
-		sp15 = new Sprinkler("SP15");
-		sp16 = new Sprinkler("SP16");
+		Sprinkler south_sp1 = new Sprinkler("S1",true);
+		Sprinkler south_sp2 = new Sprinkler("S2",true);
+		Sprinkler south_sp3 = new Sprinkler("S3",false);
+		Sprinkler south_sp4 = new Sprinkler("S4",true);
 		
-		zoneEast = new Zone("ZE", sp1,sp2, sp3, sp4);
-		zoneWest = new Zone("ZW", sp5,sp6, sp7, sp8);
-		zoneNorth = new Zone("ZN", sp9,sp10, sp11, sp12);
-		zoneSouth = new Zone("ZS", sp13, sp14, sp15, sp16);
+		
+		Zone zoneEast = new Zone("East", east_sp1,east_sp2, east_sp3, east_sp4);
+		Zone zoneWest = new Zone("West", west_sp1,west_sp2, west_sp3, west_sp4);
+		Zone zoneNorth = new Zone("North", north_sp1,north_sp2, north_sp3, north_sp4);
+		Zone zoneSouth = new Zone("South", south_sp1, south_sp2, south_sp3, south_sp4);
+		
+		garden.addZone(zoneEast);
+		garden.addZone(zoneWest);
+		garden.addZone(zoneNorth);
+		garden.addZone(zoneSouth);
 				
 	}
 
-	public static void main(String args[]){
+
+		public Garden getGarden() {
+			return garden;
+		}
 		
-	}
+		public Zone getZoneFromZoneId(String zoneId)
+		{
+			for(Zone z: garden.getZones())
+			{
+				if(z.getGroupId().equalsIgnoreCase(zoneId))
+					return z;
+			}
+			return null;
+		}
+		
+		public String getZoneStatus(String zoneId)
+		{
+			Zone z=getZoneFromZoneId(zoneId);
+			String status="";
+			for(Sprinkler s: z.getZoneSprinklerList())
+			{
+				status+="\n"+s.getStatus();
+			}
+			return status;
+		}
+
+	
 
 }
