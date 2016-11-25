@@ -2,6 +2,7 @@ package bhat.gupta.hummingbee.model;
 
 import java.security.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Zone {
@@ -9,11 +10,15 @@ public class Zone {
 	private String groupId;
 	private int minTemperature;
 	private int maxTemperature;
-	private Timestamp startTime;
-	private Timestamp endTime;
+	private String startTime;
+	private String endTime;
 	private int waterFlow;
 	
 	private List<Sprinkler> zoneSprinklerList;
+	
+	public Zone(){
+		zoneSprinklerList = new ArrayList<Sprinkler>();
+	}
 	
 	public Zone(String groupId){
 		this.groupId = groupId;
@@ -66,21 +71,21 @@ public class Zone {
 		this.maxTemperature = maxTemperature;
 	}
 
-	public Timestamp getStartTime() {
+	/*public Date getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(Timestamp startTime) {
+	public void setStartTime(Date startTime) {
 		this.startTime = startTime;
 	}
 
-	public Timestamp getEndTime() {
+	public Date getEndTime() {
 		return endTime;
 	}
 
-	public void setEndTime(Timestamp endTime) {
+	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
-	}
+	}*/
 
 	public int getWaterFlow() {
 		return waterFlow;
@@ -101,8 +106,30 @@ public class Zone {
 	public void removeSprinkler(Sprinkler sprinkler){
 		this.zoneSprinklerList.remove(sprinkler);
 	}
+	
 	@Override
 	public String toString() {
-		return this.groupId;
+		return "GroupID = " + this.groupId +
+				"\tStart time = " + this.getStartTime() +
+				"\tStop time = " + this.getEndTime() +
+				"\tMin Temp = " + this.minTemperature + 
+				"\t Max Temp = " + this.maxTemperature + 
+				"\twateRate = " + this.waterFlow;
+	}
+
+	public String getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+
+	public String getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
 	}
 }
