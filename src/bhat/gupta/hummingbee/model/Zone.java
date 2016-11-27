@@ -1,13 +1,15 @@
 package bhat.gupta.hummingbee.model;
 
-import java.security.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
+import bhat.gupta.hummingbee.controller.GardenController.ZoneId;
+
+
 
 public class Zone {
 	
-	private String groupId;
+	private ZoneId groupId;
 	private int minTemperature;
 	private int maxTemperature;
 	private String startTime;
@@ -20,18 +22,18 @@ public class Zone {
 		zoneSprinklerList = new ArrayList<Sprinkler>();
 	}
 	
-	public Zone(String groupId){
+	public Zone(ZoneId groupId){
 		this.groupId = groupId;
 		this.zoneSprinklerList=new ArrayList<Sprinkler>();
 	}
 	
-	public Zone(String groupId, Sprinkler sprinkler){
+	public Zone(ZoneId groupId, Sprinkler sprinkler){
 		this.groupId = groupId;
 		this.zoneSprinklerList=new ArrayList<Sprinkler>();
 		this.zoneSprinklerList.add(sprinkler);
 		}
 	
-	public Zone(String groupId, Sprinkler... sprinklers){
+	public Zone(ZoneId groupId, Sprinkler... sprinklers){
 		this.groupId = groupId;
 		this.zoneSprinklerList=new ArrayList<Sprinkler>();
 		for(Sprinkler s : sprinklers){
@@ -47,11 +49,11 @@ public class Zone {
 		this.zoneSprinklerList.add(sprinkler);
 	}
 	
-	public String getGroupId() {
+	public ZoneId getGroupId() {
 		return groupId;
 	}
 
-	public void setGroupId(String groupId) {
+	public void setGroupId(ZoneId groupId) {
 		this.groupId = groupId;
 	}
 

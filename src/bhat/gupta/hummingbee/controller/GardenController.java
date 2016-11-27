@@ -1,8 +1,11 @@
 package bhat.gupta.hummingbee.controller;
 
+import java.awt.Container;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 
 import javax.swing.JTextField;
@@ -17,7 +20,8 @@ public class GardenController {
 	Sprinkler east_sp1, east_sp2, east_sp3, east_sp4;
 	Zone zoneEast, zoneWest, zoneSouth, zoneNorth, currentZone;
 	private static final int DEFAULT_WATER_RATE = 30;
-	// public enum ZoneId {EAST, WEST, NORTH, SOUTH}
+	//public enum SprinklerCondition {WORKING, NOT_WORKING};
+	public enum ZoneId {EAST, WEST, NORTH, SOUTH}
 
 	public GardenController(Garden garden) {
 
@@ -45,10 +49,10 @@ public class GardenController {
 		Sprinkler south_sp4 = new Sprinkler("S4", true);
 
 		currentZone = new Zone();
-		zoneEast = new Zone("East", east_sp1, east_sp2, east_sp3, east_sp4);
-		zoneWest = new Zone("West", west_sp1, west_sp2, west_sp3, west_sp4);
-		zoneNorth = new Zone("North", north_sp1, north_sp2, north_sp3, north_sp4);
-		zoneSouth = new Zone("South", south_sp1, south_sp2, south_sp3, south_sp4);
+		zoneEast = new Zone(ZoneId.EAST, east_sp1, east_sp2, east_sp3, east_sp4);
+		zoneWest = new Zone(ZoneId.WEST, west_sp1, west_sp2, west_sp3, west_sp4);
+		zoneNorth = new Zone(ZoneId.NORTH, north_sp1, north_sp2, north_sp3, north_sp4);
+		zoneSouth = new Zone(ZoneId.SOUTH, south_sp1, south_sp2, south_sp3, south_sp4);
 
 		garden.addZone(zoneEast);
 		garden.addZone(zoneWest);
@@ -61,16 +65,16 @@ public class GardenController {
 		return garden;
 	}
 
-	public Zone getZoneFromZoneId(String zoneId) {
+	public Zone getZoneFromZoneIdString(String zoneId) {
 		for (Zone z : garden.getZones()) {
-			if (z.getGroupId().equalsIgnoreCase(zoneId))
+			if (z.getGroupId().toString().equalsIgnoreCase(zoneId))
 				return z;
 		}
 		return null;
 	}
 
 	public String getZoneStatus(String zoneId) {
-		Zone z = getZoneFromZoneId(zoneId);
+		Zone z = getZoneFromZoneIdString(zoneId);
 		String status = "";
 		for (Sprinkler s : z.getZoneSprinklerList()) {
 			status += "\n" + s.getStatus();
@@ -78,8 +82,9 @@ public class GardenController {
 		return status;
 	}
 
-	public void setZoneForProgramming(String zoneId) {
-		currentZone.setGroupId(zoneId);
+	public void setZoneForProgramming(String zoneIdString) {
+		Zone z = getZoneFromZoneIdString(zoneIdString);
+		currentZone.setGroupId(z.getGroupId());
 	}
 
 	public void setMaxTemp(String maxTempTextField) {
@@ -120,17 +125,51 @@ public class GardenController {
 	}
 
 	public void saveProgramDataForZone() {
-		String zoneId = currentZone.getGroupId();
-		if (zoneEast.getGroupId().equalsIgnoreCase(zoneId)) {
+		ZoneId zoneId = currentZone.getGroupId();
+		switch(zoneId){
+		case EAST:
 			zoneEast = currentZone;
-		} else if ((zoneWest.getGroupId()).equalsIgnoreCase(zoneId)) {
+			break;
+			
+		case WEST:
+			zoneWest = currentZone;
+			break;
+		
+		case NORTH:
+			zoneNorth = currentZone;
+			
+		case SOUTH:
+			zoneSouth = currentZone;
+			
+		}
+		/*if (zoneEast.getGroupId().equals(zoneId)) {
+			
+		} else if ((zoneWest.getGroupId()).equals(zoneId)) {
 			zoneWest = currentZone;
 		} else if ((zoneSouth.getGroupId()).equalsIgnoreCase(zoneId)) {
 			zoneSouth = currentZone;
 		} else if ((zoneNorth.getGroupId()).equalsIgnoreCase(zoneId)) {
 			zoneNorth = currentZone;
-		}
+		}*/
 		System.out.println("Zone Details = " + currentZone.toString());
+	}
+	
+	/*
+	 * Creates a HashMap of ZoneId and an ArrayList of Sprinkler Status(working/ not working) in that zone
+	 * @return Map : key is the zone id and value is an ArrayList of String/ sprinkler condition 
+	 */
+	public Map<ZoneId,ArrayList<Boolean>> getWorkingSprinklerListForEachZone(){
+		Map<ZoneId,ArrayList<Boolean>> sprinklerConditionMap = new HashMap<ZoneId,ArrayList<Boolean>>();
+		for(Zone z : garden.getZones()){
+			ZoneId zoneId = z.getGroupId();
+			ArrayList<Boolean> sprinklerConditionList = new ArrayList<Boolean>();
+			for(Sprinkler s : z.getZoneSprinklerList()){
+				sprinklerConditionList.add(s.isFunctional());
+			}
+			sprinklerConditionMap.put(zoneId, sprinklerConditionList);
+		}
+		
+		return sprinklerConditionMap;
 	}
 
 }

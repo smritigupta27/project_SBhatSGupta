@@ -25,7 +25,7 @@ public class Garden {
 		int i=0;
 		for(Zone z:zones)
 		{
-			zoneNames[i]=z.getGroupId();
+			zoneNames[i]=z.getGroupId().toString();
 			i++;
 		}
 		return zoneNames;

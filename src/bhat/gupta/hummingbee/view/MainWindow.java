@@ -35,8 +35,11 @@ import java.awt.event.ContainerListener;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
@@ -44,6 +47,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import bhat.gupta.hummingbee.controller.GardenController;
+import bhat.gupta.hummingbee.controller.GardenController.ZoneId;
 import bhat.gupta.hummingbee.model.Garden;
 
 public class MainWindow {
@@ -173,18 +177,31 @@ public class MainWindow {
 
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		mainPanel.add(tabbedPane, "tabbedPane");
-		viewGardenPanel = new JPanel();
+		Map<ZoneId,ArrayList<Boolean>> sprinklerConditionMap = (HashMap<ZoneId, ArrayList<Boolean>>) gardenController.getWorkingSprinklerListForEachZone();
+		viewGardenPanel = new ViewGardenPanel((HashMap<ZoneId, ArrayList<Boolean>>) sprinklerConditionMap);
 
 		createProgramSprinklerPanel();
 
 		createViewStatusPanel();
 		createWaterConsumptionPanel();
+		tabbedPane.addTab("View Garden", null, viewGardenPanel, null);
 		tabbedPane.addTab("Status", null, viewStatusPanel, null);
 		tabbedPane.addTab("Program", null, programSprinklerPanel, null);
-		tabbedPane.addTab("View Garden", null, viewGardenPanel, null);
-
 		tabbedPane.addTab("Water Report", null, checkWaterConsumptionPanel, null);
 		tabbedPane.setEnabledAt(0, true);
+		/*tabbedPane.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				 JTabbedPane tabbedPane = (JTabbedPane) e.getSource();
+			     int selectedIndex = tabbedPane.getSelectedIndex();
+			     if(selectedIndex == 0){
+			    	 System.out.println("its changed");
+			    	 viewGardenPanel = new ViewGardenPanel();
+			     }
+				
+			}
+		});*/
 	}
 
 	public void createProgramSprinklerPanel() {
@@ -204,7 +221,7 @@ public class MainWindow {
 		// zoneSelectionPanel.setLayout(new FlowLayout());
 		zoneLabel = new JLabel("Zone: ");
 		String[] zones = gardenController.getGarden().getZoneNames();
-		zoneComboBox = new JComboBox(zones);
+		zoneComboBox = new JComboBox<String>(zones);
 		// zoneComboBox.setModel(new
 		// DefaultComboBoxModel(gardenController.getGarden().getZoneNames()));
 		zoneSelectionPanel.add(zoneLabel);
@@ -388,6 +405,7 @@ public class MainWindow {
 		// statusZoneComboBox=new JComboBox();
 
 		statusZoneComboBox = new JComboBox(zones);
+		statusZoneComboBox.setSelectedIndex(-1);
 		statusZonePanel.add(zoneLabel);
 		statusZonePanel.add(statusZoneComboBox);
 		statusZoneComboBox.addActionListener(new ActionListener() {
@@ -412,8 +430,8 @@ public class MainWindow {
 
 	public void setProgramDataForZone() {
 
-		String zoneId = (String) zoneComboBox.getSelectedItem();
-		gardenController.setZoneForProgramming(zoneId);
+		String zoneIdString = (String) zoneComboBox.getSelectedItem();
+		gardenController.setZoneForProgramming(zoneIdString);
 
 		DateFormat sdf = new SimpleDateFormat("hh:mm");
 		String startTime = startTimeTextField.getText();// "15:30:18";
