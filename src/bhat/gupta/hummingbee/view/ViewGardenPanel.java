@@ -4,6 +4,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import bhat.gupta.hummingbee.controller.GardenController.ZoneId;
+import bhat.gupta.hummingbee.model.Zone;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -17,9 +18,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 
-public class ViewGardenPanel extends JPanel implements ActionListener {
+public class ViewGardenPanel extends JPanel implements ActionListener, Observer {
 
 	private Graphics2D g2d;
 	private final String ACTIVE_SPRINKLER_IMG = "/bhat/gupta/hummingbee/resources/ActiveSprinkler.jpg";
@@ -30,15 +33,19 @@ public class ViewGardenPanel extends JPanel implements ActionListener {
 	private boolean initialize;
 	private int startX, startY, endX1, endX2, endY1, endY2;
 	private int numOfSprinklers; // Swabhat - might be needed for animation
-	private Map sprinklerConditionMap;
-
+	private Map<ZoneId, ArrayList<Boolean>> sprinklerConditionMap;
+	private ZoneId zone;
+	private boolean startSprinkler;
+	
 	public ViewGardenPanel(HashMap<ZoneId, ArrayList<Boolean>> sprinklerConditionMap) {
+		//zone = observable
 		this.sprinklerConditionMap = new HashMap<ZoneId, ArrayList<Boolean>>();
 		this.sprinklerConditionMap = sprinklerConditionMap;
 		timer = new Timer(1000, this);
 		initialize = true;
+		startSprinkler = false;
 		System.out.println("Initialize set to true");
-		timer.start();
+		//timer.start();
 	}
 
 	public void paintComponent(Graphics g) {
@@ -49,7 +56,7 @@ public class ViewGardenPanel extends JPanel implements ActionListener {
 			// initialize few required variables
 			initializeVariables();
 //		}
-
+			
 		// give background garden color
 		setBackgroundColorForGarden();
 
@@ -65,14 +72,17 @@ public class ViewGardenPanel extends JPanel implements ActionListener {
 		
 	//	if (initialize) { // Swabhat - might be needed for animation
 		// initialize the points for drawing waterLines
-			intitializeWaterLinePoints();
+			intitializeWaterLinePoints(); //-- calling it from update
 			initialize = false;
 	//	}
 
 		Stroke dashed = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] { 7, 3 }, 0);
 		g2d.setStroke(dashed);
 		g2d.setColor(Color.BLUE);
-		drawNorthZoneLines();
+		
+		if(startSprinkler){
+			drawNorthZoneLines();
+		}
 	}
 
 	/*
@@ -336,6 +346,7 @@ public class ViewGardenPanel extends JPanel implements ActionListener {
 	// Swabhat - might be needed for animation
 	public void drawNorthZoneLines() {
 
+		System.out.println("InsideNorthZoneLines");
 		g2d.drawLine(startX, startY, endX1, endY1);
 		g2d.drawLine(startX, startY, endX2, endY1);
 		startX += columnWidth;
@@ -353,4 +364,24 @@ public class ViewGardenPanel extends JPanel implements ActionListener {
 		numOfSprinklers++;
 	}
 
+	@Override
+	public void update(Observable o, Object arg) {
+		
+		System.out.println(" I have been updated");
+		repaint();
+		intitializeWaterLinePoints();
+		Stroke dashed = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] { 7, 3 }, 0);
+		g2d.setStroke(dashed);
+		g2d.setColor(Color.BLUE);
+		drawNorthZoneLines();
+		
+	}
+
+	/*
+	 * 
+	 */
+	public void startSprinklers(ArrayList<ZoneId> zonesToBeStarted){
+		startSprinkler =  true;
+		repaint();
+	}
 }
