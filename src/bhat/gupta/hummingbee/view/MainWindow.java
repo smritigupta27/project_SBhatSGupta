@@ -15,7 +15,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Observer;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -53,7 +52,6 @@ public class MainWindow {
 	private JPanel gardenPanel;
 	private JPanel panel;
 	private JSlider temperatureSlider;
-	private Temperature temp;
 
 	/**
 	 * Launch the application.
@@ -450,10 +448,6 @@ public class MainWindow {
 		gardenController.setWaterRate(wterRate);
 
 		gardenController.saveProgramDataForZone();
-	}
-	
-	public void RegisterForTemperatureChange(Observer ob) {
-		temp.addObserver(ob);
 	}
 	
 	public void createTemperatureSlider(){
