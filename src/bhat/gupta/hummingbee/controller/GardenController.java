@@ -1,20 +1,14 @@
 package bhat.gupta.hummingbee.controller;
 
-import java.awt.Container;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-
-import javax.swing.JTextField;
 
 import bhat.gupta.hummingbee.model.Garden;
 import bhat.gupta.hummingbee.model.Sprinkler;
 import bhat.gupta.hummingbee.model.Zone;
 
-public class GardenController {
+public class GardenController{
 
 	Garden garden;
 	Sprinkler east_sp1, east_sp2, east_sp3, east_sp4;
@@ -48,11 +42,11 @@ public class GardenController {
 		Sprinkler south_sp3 = new Sprinkler("S3", false);
 		Sprinkler south_sp4 = new Sprinkler("S4", true);
 
-		currentZone = new Zone();
-		zoneEast = new Zone(ZoneId.EAST, east_sp1, east_sp2, east_sp3, east_sp4);
-		zoneWest = new Zone(ZoneId.WEST, west_sp1, west_sp2, west_sp3, west_sp4);
-		zoneNorth = new Zone(ZoneId.NORTH, north_sp1, north_sp2, north_sp3, north_sp4);
-		zoneSouth = new Zone(ZoneId.SOUTH, south_sp1, south_sp2, south_sp3, south_sp4);
+		currentZone = null;
+		zoneEast = new Zone(garden, ZoneId.EAST, east_sp1, east_sp2, east_sp3, east_sp4);
+		zoneWest = new Zone(garden, ZoneId.WEST, west_sp1, west_sp2, west_sp3, west_sp4);
+		zoneNorth = new Zone(garden, ZoneId.NORTH, north_sp1, north_sp2, north_sp3, north_sp4);
+		zoneSouth = new Zone(garden, ZoneId.SOUTH, south_sp1, south_sp2, south_sp3, south_sp4);
 
 		garden.addZone(zoneEast);
 		garden.addZone(zoneWest);
@@ -83,8 +77,7 @@ public class GardenController {
 	}
 
 	public void setZoneForProgramming(String zoneIdString) {
-		Zone z = getZoneFromZoneIdString(zoneIdString);
-		currentZone.setGroupId(z.getGroupId());
+		currentZone = getZoneFromZoneIdString(zoneIdString);
 	}
 
 	public void setMaxTemp(String maxTempTextField) {
@@ -142,15 +135,6 @@ public class GardenController {
 			zoneSouth = currentZone;
 			
 		}
-		/*if (zoneEast.getGroupId().equals(zoneId)) {
-			
-		} else if ((zoneWest.getGroupId()).equals(zoneId)) {
-			zoneWest = currentZone;
-		} else if ((zoneSouth.getGroupId()).equalsIgnoreCase(zoneId)) {
-			zoneSouth = currentZone;
-		} else if ((zoneNorth.getGroupId()).equalsIgnoreCase(zoneId)) {
-			zoneNorth = currentZone;
-		}*/
 		System.out.println("Zone Details = " + currentZone.toString());
 	}
 	
@@ -172,4 +156,28 @@ public class GardenController {
 		return sprinklerConditionMap;
 	}
 
+	/*
+	 * When the environment temperature changes this method is called.
+	 * It checks if the sprinklers need to be turned on by comparing the 
+	 * current temp with the min and max temp setting for each zone.
+	 * @ param int : The current environment temperature.
+	 */
+	public ArrayList<ZoneId> checkTempConditions(int environmentTemp){
+		ArrayList<ZoneId> zonesToBeStarted = new ArrayList<ZoneId>();
+		for (Zone z : garden.getZones()){
+			 int maxTemp = z.getMaxTemperature();
+			 if(maxTemp > 0 && environmentTemp >= maxTemp){ //to make sure max temp was set
+				 zonesToBeStarted.add(z.getGroupId());
+			 }
+		}
+		return zonesToBeStarted;
+	}
+
+	public void setGarden(Garden garden) {
+		this.garden = garden;
+	}
+	
+	public void setCurTemperature(int temp) {
+		this.garden.setTemperature(temp);
+	}
 }

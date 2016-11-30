@@ -4,6 +4,8 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import bhat.gupta.hummingbee.controller.GardenController.ZoneId;
+import bhat.gupta.hummingbee.model.Garden;
+import bhat.gupta.hummingbee.model.Sprinkler;
 import bhat.gupta.hummingbee.model.Zone;
 
 import java.awt.*;
@@ -22,22 +24,23 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 
-public class ViewGardenPanel extends JPanel implements ActionListener, Observer {
+public class ViewGardenPanel extends JPanel implements Observer {
 
 	private Graphics2D g2d;
 	private final String ACTIVE_SPRINKLER_IMG = "/bhat/gupta/hummingbee/resources/ActiveSprinkler.jpg";
 	private final String INACTIVE_SPRINKLER_IMG = "/bhat/gupta/hummingbee/resources/InactiveSprinkler.jpg";
+	private final String WATER_SPRINKLER_IMG = "/bhat/gupta/hummingbee/resources/WaterSprinkler1.jpg";
 	private int panelWidth, panelHeight, zoneHeight, zoneWidth, columnWidth, imageHeight;
-	private BufferedImage activeImage, inactiveImage;
+	private BufferedImage activeImage, inactiveImage, waterSprinkler;
 	private Timer timer;
 	private boolean initialize;
 	private int startX, startY, endX1, endX2, endY1, endY2;
 	private int numOfSprinklers; // Swabhat - might be needed for animation
 	private Map<ZoneId, ArrayList<Boolean>> sprinklerConditionMap;
 	private ZoneId zone;
-	private boolean startSprinkler;
+	private Garden garden;
 	
-	public ViewGardenPanel(HashMap<ZoneId, ArrayList<Boolean>> sprinklerConditionMap) {
+	/*public ViewGardenPanel(HashMap<ZoneId, ArrayList<Boolean>> sprinklerConditionMap) {
 		//zone = observable
 		this.sprinklerConditionMap = new HashMap<ZoneId, ArrayList<Boolean>>();
 		this.sprinklerConditionMap = sprinklerConditionMap;
@@ -46,6 +49,14 @@ public class ViewGardenPanel extends JPanel implements ActionListener, Observer 
 		startSprinkler = false;
 		System.out.println("Initialize set to true");
 		//timer.start();
+	}*/
+	
+	public ViewGardenPanel(Garden observableGarden){
+		//garden = new Garden();
+	
+		garden = observableGarden;
+		garden.addObserver(this);
+		
 	}
 
 	public void paintComponent(Graphics g) {
@@ -72,17 +83,14 @@ public class ViewGardenPanel extends JPanel implements ActionListener, Observer 
 		
 	//	if (initialize) { // Swabhat - might be needed for animation
 		// initialize the points for drawing waterLines
-			intitializeWaterLinePoints(); //-- calling it from update
-			initialize = false;
+			//intitializeWaterLinePoints(); //-- calling it from update
+			//initialize = false;
 	//	}
 
-		Stroke dashed = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] { 7, 3 }, 0);
-		g2d.setStroke(dashed);
-		g2d.setColor(Color.BLUE);
-		
-		if(startSprinkler){
-			drawNorthZoneLines();
-		}
+//		Stroke dashed = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] { 7, 3 }, 0);
+//		g2d.setStroke(dashed);
+//		g2d.setColor(Color.BLUE);
+
 	}
 
 	/*
@@ -180,28 +188,29 @@ public class ViewGardenPanel extends JPanel implements ActionListener, Observer 
 
 		activeImage = createImageFromFile(ACTIVE_SPRINKLER_IMG);
 		inactiveImage = createImageFromFile(INACTIVE_SPRINKLER_IMG);
+		waterSprinkler = createImageFromFile(WATER_SPRINKLER_IMG);
 		imageHeight = activeImage.getHeight();
 
 		// sprinklerCondition
 		// draw sprinklers for one zone at a time
-		Set<ZoneId> zoneKeys = sprinklerConditionMap.keySet();
-		for (ZoneId zoneName : zoneKeys) {
-			ArrayList<Boolean> sprinklerConditionList = (ArrayList<Boolean>) sprinklerConditionMap.get(zoneName);
-			switch (zoneName) {
+
+		for (Zone zone : garden.getZones()) {
+			//ArrayList<Boolean> sprinklerConditionList = (ArrayList<Boolean>) sprinklerConditionMap.get(zoneName);
+			switch (zone.getGroupId()) {
 
 			case EAST:
-				drawEastZoneSprinklers(sprinklerConditionList);
+				drawEastZoneSprinklers(zone);
 				break;
 
 			case WEST:
-				drawWestZoneSprinklers(sprinklerConditionList);
+				drawWestZoneSprinklers(zone);
 				break;
 
 			case NORTH:
-				drawNorthZoneSprinklers(sprinklerConditionList);
+				drawNorthZoneSprinklers(zone);
 
 			case SOUTH:
-				drawSouthZoneSprinklers(sprinklerConditionList);
+				drawSouthZoneSprinklers(zone);
 
 			}
 		}
@@ -237,15 +246,15 @@ public class ViewGardenPanel extends JPanel implements ActionListener, Observer 
 	 * helper method that displays the appropriate sprinkler image for
 	 * functional and non functional sprinklers in the North Zone
 	 */
-	private void drawNorthZoneSprinklers(ArrayList<Boolean> sprinklerConditionList) {
+	private void drawNorthZoneSprinklers(Zone zone) {
 
 		// draw the image 4 times in each zone
 		int startX, startY;
 		startX = columnWidth;
 		startY = panelHeight / 2 - imageHeight - 30;
 		BufferedImage image;
-		for (Boolean isFunctional : sprinklerConditionList) {
-			if (isFunctional) {
+		for (Sprinkler s : zone.getZoneSprinklerList()) {
+			if (s.isFunctional()) {
 				image = activeImage;
 			} else {
 				image = inactiveImage;
@@ -259,17 +268,16 @@ public class ViewGardenPanel extends JPanel implements ActionListener, Observer 
 	 * helper method that displays the appropriate sprinkler image for
 	 * functional and non functional sprinklers in the East Zone
 	 */
-	private void drawEastZoneSprinklers(ArrayList<Boolean> sprinklerConditionList) {
-
+//	private void drawEastZoneSprinklers(ArrayList<Boolean> sprinklerConditionList) {
+	private void drawEastZoneSprinklers(Zone zone) {
+		
 		// draw the image 4 times in each zone
 		int startX, startY;
 		startX = zoneWidth + columnWidth;
 		startY = zoneHeight - imageHeight - 30;
-		BufferedImage image;
-		for (Boolean isFunctional : sprinklerConditionList) {
-			if (isFunctional) {
-				image = activeImage;
-			} else {
+		for (Sprinkler s : zone.getZoneSprinklerList()) {
+			BufferedImage image = zone.isOn() ? waterSprinkler : activeImage;
+			if (!s.isFunctional()) {
 				image = inactiveImage;
 			}
 			g2d.drawImage(image, startX, startY, null);
@@ -281,15 +289,15 @@ public class ViewGardenPanel extends JPanel implements ActionListener, Observer 
 	 * helper method that displays the appropriate sprinkler image for
 	 * functional and non functional sprinklers in the East Zone
 	 */
-	private void drawWestZoneSprinklers(ArrayList<Boolean> sprinklerConditionList) {
+	private void drawWestZoneSprinklers(Zone zone) {
 
 		// draw the image 4 times in each zone
 		int startX, startY;
 		startX = columnWidth;
 		startY = panelHeight - imageHeight - 30;
 		BufferedImage image;
-		for (Boolean isFunctional : sprinklerConditionList) {
-			if (isFunctional) {
+		for (Sprinkler s : zone.getZoneSprinklerList()) {
+			if (s.isFunctional()) {
 				image = activeImage;
 			} else {
 				image = inactiveImage;
@@ -303,15 +311,15 @@ public class ViewGardenPanel extends JPanel implements ActionListener, Observer 
 	 * helper method that displays the appropriate sprinkler image for
 	 * functional and non functional sprinklers in the East Zone
 	 */
-	private void drawSouthZoneSprinklers(ArrayList<Boolean> sprinklerConditionList) {
+	private void drawSouthZoneSprinklers(Zone zone) {
 
 		// draw the image 4 times in each zone
 		int startX, startY;
 		startX = zoneWidth + columnWidth;
 		startY = panelHeight - imageHeight - 30;
 		BufferedImage image;
-		for (Boolean isFunctional : sprinklerConditionList) {
-			if (isFunctional) {
+		for (Sprinkler s : zone.getZoneSprinklerList()) {
+			if (s.isFunctional()) {
 				image = activeImage;
 			} else {
 				image = inactiveImage;
@@ -354,34 +362,29 @@ public class ViewGardenPanel extends JPanel implements ActionListener, Observer 
 		endX2 += columnWidth;
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (numOfSprinklers < 3) {
-			repaint();
-		} else {
-			timer.stop();
-		}
-		numOfSprinklers++;
-	}
-
-	@Override
-	public void update(Observable o, Object arg) {
-		
-		System.out.println(" I have been updated");
-		repaint();
-		intitializeWaterLinePoints();
-		Stroke dashed = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] { 7, 3 }, 0);
-		g2d.setStroke(dashed);
-		g2d.setColor(Color.BLUE);
-		drawNorthZoneLines();
-		
-	}
+//	@Override
+//	public void actionPerformed(ActionEvent e) {
+//		if (numOfSprinklers < 3) {
+//			repaint();
+//		} else {
+//			timer.stop();
+//		}
+//		numOfSprinklers++;
+//	}
 
 	/*
 	 * 
 	 */
-	public void startSprinklers(ArrayList<ZoneId> zonesToBeStarted){
-		startSprinkler =  true;
+//	public void startSprinklersCozOfTemperature(ArrayList<ZoneId> zonesToBeStarted){
+//		repaint();
+//	}
+
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
+	@Override
+	public void update(Observable o, Object arg) {
+		System.out.println("Starting Sprinkler");
 		repaint();
 	}
 }

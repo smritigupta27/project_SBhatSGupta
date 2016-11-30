@@ -1,47 +1,32 @@
 package bhat.gupta.hummingbee.view;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
-
 import java.awt.BorderLayout;
-
-import javax.swing.JLabel;
-
-import java.awt.Font;
-
-import javax.swing.JButton;
-import javax.swing.JTabbedPane;
-
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Toolkit;
-
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.DefaultComboBoxModel;
-
+import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ContainerEvent;
-import java.awt.event.ContainerListener;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observer;
 
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -65,6 +50,10 @@ public class MainWindow {
 			dayLabel;
 	GardenController gardenController;
 	JComboBox timeComboBox, zoneComboBox, sprinklerComboBox, dayComboBox, statusZoneComboBox, waterRateComboBox;
+	private JPanel gardenPanel;
+	private JPanel panel;
+	private JSlider temperatureSlider;
+	private Temperature temp;
 
 	/**
 	 * Launch the application.
@@ -75,6 +64,7 @@ public class MainWindow {
 				try {
 					MainWindow window = new MainWindow();
 					window.frame.setVisible(true);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -178,30 +168,28 @@ public class MainWindow {
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		mainPanel.add(tabbedPane, "tabbedPane");
 		Map<ZoneId,ArrayList<Boolean>> sprinklerConditionMap = (HashMap<ZoneId, ArrayList<Boolean>>) gardenController.getWorkingSprinklerListForEachZone();
-		viewGardenPanel = new ViewGardenPanel((HashMap<ZoneId, ArrayList<Boolean>>) sprinklerConditionMap);
 
 		createProgramSprinklerPanel();
 
 		createViewStatusPanel();
 		createWaterConsumptionPanel();
-		tabbedPane.addTab("View Garden", null, viewGardenPanel, null);
 		tabbedPane.addTab("Status", null, viewStatusPanel, null);
 		tabbedPane.addTab("Program", null, programSprinklerPanel, null);
 		tabbedPane.addTab("Water Report", null, checkWaterConsumptionPanel, null);
-		tabbedPane.setEnabledAt(0, true);
-		/*tabbedPane.addChangeListener(new ChangeListener() {
-			
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				 JTabbedPane tabbedPane = (JTabbedPane) e.getSource();
-			     int selectedIndex = tabbedPane.getSelectedIndex();
-			     if(selectedIndex == 0){
-			    	 System.out.println("its changed");
-			    	 viewGardenPanel = new ViewGardenPanel();
-			     }
-				
-			}
-		});*/
+		
+		gardenPanel = new JPanel();
+		tabbedPane.addTab("View Garden", null, gardenPanel, null);
+		gardenPanel.setLayout(new BorderLayout(0, 0));
+		viewGardenPanel = new ViewGardenPanel(gardenController.getGarden());//new ViewGardenPanel((HashMap<ZoneId, ArrayList<Boolean>>) sprinklerConditionMap);
+		gardenPanel.add(viewGardenPanel, BorderLayout.CENTER);
+		
+		panel = new JPanel();
+		panel.setBackground(new Color(46, 139, 87));
+		gardenPanel.add(panel, BorderLayout.SOUTH);
+		
+		
+		createTemperatureSlider();
+		panel.add(temperatureSlider);
 	}
 
 	public void createProgramSprinklerPanel() {
@@ -462,6 +450,35 @@ public class MainWindow {
 		gardenController.setWaterRate(wterRate);
 
 		gardenController.saveProgramDataForZone();
+	}
+	
+	public void RegisterForTemperatureChange(Observer ob) {
+		temp.addObserver(ob);
+	}
+	
+	public void createTemperatureSlider(){
+		
+		temperatureSlider = new JSlider();
+		temperatureSlider.setBackground(new Color(255, 255, 255));
+		temperatureSlider.setForeground(new Color(0, 0, 0));
+		temperatureSlider.setValue(70);
+		temperatureSlider.setMaximum(110);
+		temperatureSlider.setMinimum(40);
+		temperatureSlider.setMajorTickSpacing(10);
+		temperatureSlider.setToolTipText("simulate environmental temperature\n");
+		temperatureSlider.setPaintTicks(true);
+		temperatureSlider.setPaintLabels(true);
+		temperatureSlider.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				 
+				JSlider currentTempSlider = (JSlider) e.getSource();
+				int selectedTemp = currentTempSlider.getValue();
+				gardenController.setCurTemperature(selectedTemp);
+				
+			}
+		});
 	}
 }
 
