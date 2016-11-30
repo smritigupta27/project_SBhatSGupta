@@ -31,7 +31,6 @@ public class Garden extends Observable{
 
 	public void addZone(Zone zone) {
 		this.zones.add(zone);
-		System.out.println("Garden Changed");
 	}
 
 	public void removeZone(Zone zone) {

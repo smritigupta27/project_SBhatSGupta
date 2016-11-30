@@ -97,7 +97,7 @@ public class MainWindow {
 
 		tabbedPane.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				System.out.println("Tab: " + tabbedPane.getSelectedIndex() + "has been selected");
+				//System.out.println("Tab: " + tabbedPane.getSelectedIndex() + "has been selected");
 			}
 		});
 
@@ -165,7 +165,7 @@ public class MainWindow {
 
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		mainPanel.add(tabbedPane, "tabbedPane");
-		Map<ZoneId,ArrayList<Boolean>> sprinklerConditionMap = (HashMap<ZoneId, ArrayList<Boolean>>) gardenController.getWorkingSprinklerListForEachZone();
+		//Map<ZoneId,ArrayList<Boolean>> sprinklerConditionMap = (HashMap<ZoneId, ArrayList<Boolean>>) gardenController.getWorkingSprinklerListForEachZone();
 
 		createProgramSprinklerPanel();
 
@@ -242,9 +242,10 @@ public class MainWindow {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				setProgramDataForZone();
-				programSprinklerPanel.remove(programInputPanel);
+				resetProgramInputPanel();
+				/*programSprinklerPanel.remove(programInputPanel);
 				createProgramInputPanel();
-				programSprinklerPanel.add(programInputPanel, BorderLayout.CENTER);
+				programSprinklerPanel.add(programInputPanel, BorderLayout.CENTER);*/
 			}
 		});
 	}
@@ -298,20 +299,20 @@ public class MainWindow {
 		dayLabel.setVisible(false);
 		dayComboBox.setVisible(false);
 
-		startTimeLabel = new JLabel("Start Time:");
+		startTimeLabel = new JLabel("Start Time (hh:mm):");
 		timeConfigPanel.add(startTimeLabel);
 		startTimeTextField = new JTextField();
 		startTimeTextField.setToolTipText("Enter the Start Time for the Sprinkler(s)");
-		startTimeTextField.setText("hrs:min");
+		startTimeTextField.setText("");
 		startTimeTextField.setColumns(10);
 		timeConfigPanel.add(startTimeTextField);
 
-		stopTimeLabel = new JLabel("Stop Time:");
+		stopTimeLabel = new JLabel("Stop Time (hh:mm):");
 		timeConfigPanel.add(stopTimeLabel);
 
 		stopTimeTextField = new JTextField();
 		stopTimeTextField.setToolTipText("Enter the Stop Time for the Sprinkler(s)");
-		stopTimeTextField.setText("hrs:min");
+		stopTimeTextField.setText("");
 		stopTimeTextField.setColumns(10);
 		timeConfigPanel.add(stopTimeTextField);
 
@@ -363,6 +364,7 @@ public class MainWindow {
 
 		String[] waterRateArray = new String[] { "10", "20", "30", "40", "50" };
 		waterRateComboBox = new JComboBox(waterRateArray);
+		waterRateComboBox.setSelectedIndex(2);
 		waterConfigPanel.add(waterRateComboBox);
 
 		waterRateComboBox.addActionListener(new ActionListener() {
@@ -473,6 +475,17 @@ public class MainWindow {
 				
 			}
 		});
+	}
+	
+	public void resetProgramInputPanel() {
+		zoneComboBox.setSelectedIndex(0);
+		timeComboBox.setSelectedIndex(0);
+		startTimeTextField.setText("");
+		stopTimeTextField.setText("");
+		minTempTextField.setText("");
+		maxTempTextField.setText("");
+		waterRateComboBox.setSelectedIndex(2);
+
 	}
 }
 

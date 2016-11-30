@@ -3,13 +3,14 @@ package bhat.gupta.hummingbee.model;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.Timer;
 
 import bhat.gupta.hummingbee.controller.GardenController.ZoneId;
 
-public class Zone implements  ActionListener{//swabhat
+public class Zone implements  ActionListener, Comparator<Zone>{
 
 	private ZoneId groupId;
 	private int minTemperature;
@@ -37,14 +38,6 @@ public class Zone implements  ActionListener{//swabhat
 		this.isProgrammed = false;
 		this.timer = new Timer(5000, this);
 		this.zoneSprinklerList = new ArrayList<Sprinkler>();
-	}
-
-	public Zone(Garden garden, ZoneId groupId, Sprinkler sprinkler) {
-		this.groupId = groupId;
-		this.garden = garden;
-		this.zoneSprinklerList = new ArrayList<Sprinkler>();
-		this.timer = new Timer(5000, this);
-		this.zoneSprinklerList.add(sprinkler);
 	}
 
 	public Zone(Garden garden, ZoneId groupId, Sprinkler... sprinklers) {
@@ -130,7 +123,6 @@ public class Zone implements  ActionListener{//swabhat
 	}
 
 	public String getStartTime() {
-		
 		return startTime;
 	}
 
@@ -202,5 +194,14 @@ public class Zone implements  ActionListener{//swabhat
 		//TODO: Before setting to false check if this is within schedule and turn off only if it is outside the schedule.
 		this.isOn = false;
 		garden.notifyView();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	 */
+	@Override
+	public int compare(Zone zone1, Zone zone2) {
+		// TODO Auto-generated method stub
+		return zone1.getGroupId().compareTo(zone2.getGroupId());
 	}
 }

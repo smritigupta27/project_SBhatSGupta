@@ -11,11 +11,11 @@ import bhat.gupta.hummingbee.model.Zone;
 public class GardenController{
 
 	Garden garden;
-	Sprinkler east_sp1, east_sp2, east_sp3, east_sp4;
+	Sprinkler east_sp1, east_sp2, east_sp3, east_sp4,west_sp1,west_sp2,west_sp3,west_sp4,north_sp1,north_sp2,north_sp3,north_sp4,south_sp1,south_sp2,south_sp3,south_sp4;
 	Zone zoneEast, zoneWest, zoneSouth, zoneNorth, currentZone;
 	private static final int DEFAULT_WATER_RATE = 30;
 	//public enum SprinklerCondition {WORKING, NOT_WORKING};
-	public enum ZoneId {EAST, WEST, NORTH, SOUTH}
+	public enum ZoneId {NORTH, EAST, WEST, SOUTH}
 
 	public GardenController(Garden garden) {
 
@@ -27,20 +27,20 @@ public class GardenController{
 		east_sp3 = new Sprinkler("E3", true);
 		east_sp4 = new Sprinkler("E4", false);
 
-		Sprinkler west_sp1 = new Sprinkler("W1", true);
-		Sprinkler west_sp2 = new Sprinkler("W2", false);
-		Sprinkler west_sp3 = new Sprinkler("W3", true);
-		Sprinkler west_sp4 = new Sprinkler("W4", true);
+		west_sp1 = new Sprinkler("W1", true);
+		west_sp2 = new Sprinkler("W2", false);
+		west_sp3 = new Sprinkler("W3", true);
+		west_sp4 = new Sprinkler("W4", true);
 
-		Sprinkler north_sp1 = new Sprinkler("N1", true);
-		Sprinkler north_sp2 = new Sprinkler("N2", true);
-		Sprinkler north_sp3 = new Sprinkler("N3", true);
-		Sprinkler north_sp4 = new Sprinkler("N4", true);
+		north_sp1 = new Sprinkler("N1", true);
+		north_sp2 = new Sprinkler("N2", true);
+		north_sp3 = new Sprinkler("N3", true);
+		north_sp4 = new Sprinkler("N4", true);
 
-		Sprinkler south_sp1 = new Sprinkler("S1", true);
-		Sprinkler south_sp2 = new Sprinkler("S2", true);
-		Sprinkler south_sp3 = new Sprinkler("S3", false);
-		Sprinkler south_sp4 = new Sprinkler("S4", true);
+		south_sp1 = new Sprinkler("S1", true);
+		south_sp2 = new Sprinkler("S2", true);
+		south_sp3 = new Sprinkler("S3", false);
+		south_sp4 = new Sprinkler("S4", true);
 
 		currentZone = null;
 		zoneEast = new Zone(garden, ZoneId.EAST, east_sp1, east_sp2, east_sp3, east_sp4);
@@ -138,23 +138,6 @@ public class GardenController{
 		System.out.println("Zone Details = " + currentZone.toString());
 	}
 	
-	/*
-	 * Creates a HashMap of ZoneId and an ArrayList of Sprinkler Status(working/ not working) in that zone
-	 * @return Map : key is the zone id and value is an ArrayList of String/ sprinkler condition 
-	 */
-	public Map<ZoneId,ArrayList<Boolean>> getWorkingSprinklerListForEachZone(){
-		Map<ZoneId,ArrayList<Boolean>> sprinklerConditionMap = new HashMap<ZoneId,ArrayList<Boolean>>();
-		for(Zone z : garden.getZones()){
-			ZoneId zoneId = z.getGroupId();
-			ArrayList<Boolean> sprinklerConditionList = new ArrayList<Boolean>();
-			for(Sprinkler s : z.getZoneSprinklerList()){
-				sprinklerConditionList.add(s.isFunctional());
-			}
-			sprinklerConditionMap.put(zoneId, sprinklerConditionList);
-		}
-		
-		return sprinklerConditionMap;
-	}
 
 	/*
 	 * When the environment temperature changes this method is called.
