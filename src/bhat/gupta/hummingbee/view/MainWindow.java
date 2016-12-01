@@ -32,6 +32,7 @@ import javax.swing.event.ChangeListener;
 
 import bhat.gupta.hummingbee.controller.GardenController;
 import bhat.gupta.hummingbee.controller.GardenController.ZoneId;
+import bhat.gupta.hummingbee.controller.WaterConsumptionCalculator;
 import bhat.gupta.hummingbee.model.Garden;
 
 public class MainWindow {
@@ -52,6 +53,7 @@ public class MainWindow {
 	private JPanel gardenPanel;
 	private JPanel panel;
 	private JSlider temperatureSlider;
+	WaterConsumptionCalculator waterConsumptioncalculator;
 
 	/**
 	 * Launch the application.
@@ -86,6 +88,7 @@ public class MainWindow {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		Garden garden = new Garden("Humming Bee Garden");
 		gardenController = new GardenController(garden);
+		waterConsumptioncalculator=new WaterConsumptionCalculator();
 
 		createTitlePanel();
 		frame.getContentPane().add(titlePanel, BorderLayout.NORTH);
@@ -141,7 +144,9 @@ public class MainWindow {
 	}
 
 	public void createWaterConsumptionPanel() {
-		checkWaterConsumptionPanel = new JPanel();
+		//checkWaterConsumptionPanel = new JPanel();
+		Map<String,Map<String,Double>> dayVolumeMapByZones=waterConsumptioncalculator.getWaterConsumptionData();
+		checkWaterConsumptionPanel= new WaterConsumptionChartPanel(dayVolumeMapByZones);
 		checkWaterConsumptionPanel.setToolTipText("View Water Consumption data");
 	}
 
