@@ -53,6 +53,7 @@ public class Zone implements  ActionListener, Comparator<Zone>{
 		this.zoneSprinklerList = new ArrayList<Sprinkler>();
 		this.temperatureTimer = new Timer(TEMP_SPRINKLER_TIME, this);
 		for (Sprinkler s : sprinklers) {
+			s.setZone(this);
 			this.zoneSprinklerList.add(s);
 		}
 	}

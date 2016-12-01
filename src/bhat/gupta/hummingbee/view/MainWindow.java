@@ -46,19 +46,22 @@ public class MainWindow {
 			checkWaterConsumptionPanel;
 	private JTabbedPane tabbedPane;
 	JPanel submitButtonPanel, timeConfigPanel, temperatureConfigPanel,
-			waterConfigPanel, statusZonePanel, statusDisplayPanel;
+			waterConfigPanel;
 	private JTextField startTimeTextField, stopTimeTextField, minTempTextField,
 			maxTempTextField, waterFlowTextField;
-	private JTextArea statusTextArea;
+	//private JTextArea statusTextArea;
 	private JButton onOffButton, submitButton;
-	JLabel durationLabel, waterFlowLabel, maxTempLabel, minTempLabel,
-			stopTimeLabel, startTimeLabel, zoneLabel, dayLabel;
+	JLabel durationLabel, waterFlowLabel, maxTempLabel, minTempLabel,zoneLabel,
+			stopTimeLabel, startTimeLabel, dayLabel;
 	GardenController gardenController;
-	JComboBox timeComboBox, zoneComboBox, sprinklerComboBox, dayComboBox,
-			statusZoneComboBox, waterRateComboBox;
+	JComboBox timeComboBox, zoneComboBox, sprinklerComboBox, dayComboBox,waterRateComboBox;
 	private JPanel gardenPanel;
 	private JPanel panel;
 	private JSlider temperatureSlider;
+//	JTextArea statusTextArea;
+//	JPanel statusZonePanel,statusDisplayPanel;
+//	JLabel zoneLabel; 
+//	JComboBox statusZoneComboBox;
 	WaterConsumptionCalculator waterConsumptioncalculator;
 
 	/**
@@ -125,8 +128,8 @@ public class MainWindow {
 
 	public void createTitlePanel() {
 		titlePanel = new JPanel();
-		JLabel lblHummingBee = new JLabel("Humming Bee");
-		lblHummingBee.setFont(new Font("Baghdad", Font.BOLD, 14));
+		JLabel lblHummingBee = new JLabel("Humming Bee Garden Sprinkler System");
+		lblHummingBee.setFont(new Font("Baghdad", Font.BOLD, 16));
 		titlePanel.add(lblHummingBee);
 	}
 
@@ -162,13 +165,14 @@ public class MainWindow {
 	}
 
 	public void createViewStatusPanel() {
-		viewStatusPanel = new JPanel();
-		viewStatusPanel.setLayout(new BorderLayout());
-		createZoneSelectionPanelForStatus();
-		viewStatusPanel.add(statusZonePanel, BorderLayout.NORTH);
-		viewStatusPanel.setToolTipText("View the Status of the Sprinklers");
-		createStatusDisplayPanel();
-		viewStatusPanel.add(statusDisplayPanel, BorderLayout.CENTER);
+		viewStatusPanel=new ViewStatusPanel(gardenController.getGarden());
+//		viewStatusPanel = new JPanel();
+//		viewStatusPanel.setLayout(new BorderLayout());
+//		createZoneSelectionPanelForStatus();
+//		viewStatusPanel.add(statusZonePanel, BorderLayout.NORTH);
+//		viewStatusPanel.setToolTipText("View the Status of the Sprinklers");
+//		createStatusDisplayPanel();
+//		viewStatusPanel.add(statusDisplayPanel, BorderLayout.CENTER);
 	}
 
 	public void createMainPanel() {
@@ -189,6 +193,8 @@ public class MainWindow {
 
 		createViewStatusPanel();
 		createWaterConsumptionPanel();
+		gardenPanel = new JPanel();
+		tabbedPane.addTab("View Garden", null, gardenPanel, null);
 		tabbedPane.addTab("Status", null, viewStatusPanel, null);
 		tabbedPane.addTab("Program", null, programSprinklerPanel, null);
 		tabbedPane.addTab("Water Report", null, checkWaterConsumptionPanel,
@@ -204,8 +210,7 @@ public class MainWindow {
 			}
 
 		});
-		gardenPanel = new JPanel();
-		tabbedPane.addTab("View Garden", null, gardenPanel, null);
+		
 		gardenPanel.setLayout(new BorderLayout(0, 0));
 		viewGardenPanel = new ViewGardenPanel(gardenController.getGarden());// new
 																			// ViewGardenPanel((HashMap<ZoneId,
@@ -484,14 +489,14 @@ public class MainWindow {
 		waterRateComboBox.setSelectedIndex(2);
 		waterConfigPanel.add(waterRateComboBox);
 
-		waterRateComboBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JComboBox cb = (JComboBox) e.getSource();
-				String waterRate = (String) cb.getSelectedItem();
-				gardenController.setWaterRate(waterRate);
-
-			}
-		});
+//		waterRateComboBox.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				JComboBox cb = (JComboBox) e.getSource();
+//				String waterRate = (String) cb.getSelectedItem();
+//				gardenController.setWaterRate(waterRate);
+//
+//			}
+//		});
 		/*
 		 * waterFlowTextField.setToolTipText(
 		 * "Enter the water flow in terms of liters per hour");
@@ -504,34 +509,35 @@ public class MainWindow {
 	}
 
 	public void createZoneSelectionPanelForStatus() {
-		statusZonePanel = new JPanel();
-		zoneLabel = new JLabel("Zone: ");
-		String[] zones = gardenController.getGarden().getZoneNames();
-		// statusZoneComboBox=new JComboBox();
-
-		statusZoneComboBox = new JComboBox(zones);
-		statusZoneComboBox.setSelectedIndex(-1);
-		statusZonePanel.add(zoneLabel);
-		statusZonePanel.add(statusZoneComboBox);
-		statusZoneComboBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JComboBox cb = (JComboBox) e.getSource();
-				String zoneId = (String) cb.getSelectedItem();
-				statusTextArea.setText(gardenController.getZoneStatus(zoneId));
-
-			}
-		});
+		
+//		statusZonePanel = new JPanel();
+//		zoneLabel = new JLabel("Zone: ");
+//		String[] zones = gardenController.getGarden().getZoneNames();
+//		// statusZoneComboBox=new JComboBox();
+//
+//		statusZoneComboBox = new JComboBox(zones);
+//		statusZoneComboBox.setSelectedIndex(-1);
+//		statusZonePanel.add(zoneLabel);
+//		statusZonePanel.add(statusZoneComboBox);
+//		statusZoneComboBox.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				JComboBox cb = (JComboBox) e.getSource();
+//				String zoneId = (String) cb.getSelectedItem();
+//				statusTextArea.setText(gardenController.getZoneStatus(zoneId));
+//
+//			}
+//		});
 
 	}
 
-	public void createStatusDisplayPanel() {
-		statusDisplayPanel = new JPanel();
-		statusDisplayPanel.setBorder(new TitledBorder("Status"));
-		statusDisplayPanel.setLayout(new GridLayout());
-		statusTextArea = new JTextArea();
-		statusTextArea.setEditable(false);
-		statusDisplayPanel.add(statusTextArea);
-	}
+//	public void createStatusDisplayPanel() {
+//		statusDisplayPanel = new JPanel();
+//		statusDisplayPanel.setBorder(new TitledBorder("Status"));
+//		statusDisplayPanel.setLayout(new GridLayout());
+//		statusTextArea = new JTextArea();
+//		statusTextArea.setEditable(false);
+//		statusDisplayPanel.add(statusTextArea);
+//	}
 
 	public void setProgramDataForZone() {
 		String zoneIdString = (String) zoneComboBox.getSelectedItem();

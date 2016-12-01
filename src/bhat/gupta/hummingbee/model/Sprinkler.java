@@ -4,6 +4,14 @@ public class Sprinkler {
 	private String sprinklerId;
 	private boolean isFunctional;
 	private int waterFlow;
+	private Zone zone;
+	public Zone getZone() {
+		return zone;
+	}
+	public void setZone(Zone zone) {
+		this.zone = zone;
+	}
+	
 	
 	public Sprinkler(String sprinklerId){
 		this.sprinklerId = sprinklerId;
@@ -34,7 +42,23 @@ public class Sprinkler {
 	}
 	
 	public String getStatus() {
-		return "Sprinkler ID: "+this.getSprinklerId()+",\tFunctional: "+this.isFunctional;
+		String strFunctional="";
+		String strActive="";
+		if(this.isFunctional)
+			strFunctional="FUNCTIONAL";
+		else
+			strFunctional=" NOT FUNCTIONAL";
+		
+		if(this.getZone().isOn() && this.isFunctional)
+		{
+			strActive="ON";
+		}
+		else
+		{
+			strActive="OFF";
+		}
+//		return "Sprinkler ID: "+this.getSprinklerId()+",\tFunctional: "+this.isFunctional;
+		return this.getSprinklerId()+","+strFunctional+","+strActive;
 	}
 	@Override
 	public String toString() {
