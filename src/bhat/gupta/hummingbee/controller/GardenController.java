@@ -109,12 +109,12 @@ public class GardenController{
 	}*/
 	
 	public void setStartTime(String beginTime) {
-		currentZone.setStartTime(beginTime);
+		currentZone.setStartDate(beginTime);
 
 	}
 
 	public void setStopTime(String endTime) {
-		currentZone.setEndTime(endTime);
+		currentZone.setEndDate(endTime);
 	}
 
 	public void saveProgramDataForZone() {
@@ -145,7 +145,7 @@ public class GardenController{
 	 * current temp with the min and max temp setting for each zone.
 	 * @ param int : The current environment temperature.
 	 */
-	public ArrayList<ZoneId> checkTempConditions(int environmentTemp){
+/*	public ArrayList<ZoneId> checkTempConditions(int environmentTemp){
 		ArrayList<ZoneId> zonesToBeStarted = new ArrayList<ZoneId>();
 		for (Zone z : garden.getZones()){
 			 int maxTemp = z.getMaxTemperature();
@@ -155,7 +155,7 @@ public class GardenController{
 		}
 		return zonesToBeStarted;
 	}
-
+*/
 	public void setGarden(Garden garden) {
 		this.garden = garden;
 	}
@@ -163,4 +163,43 @@ public class GardenController{
 	public void setCurTemperature(int temp) {
 		this.garden.setTemperature(temp);
 	}
+	
+	//swabhat
+	public void saveTimeTemperature(String beginTime, String endTime, String minTemp, String maxTemp){
+		currentZone.setStartDate(beginTime);
+		currentZone.setEndDate(endTime);
+		setMinTemp(minTemp);
+		setMaxTemp(maxTemp);
+		currentZone.setSchedule();
+		
+	}
+	
+	//swabhat
+	public void addWaterData(Map<String,Map<String,Double>> dayVolumeMapByZones){
+			
+			
+			for (Map.Entry<String, Map<String, Double>> entry : dayVolumeMapByZones.entrySet()) {
+				
+				Map<String, Double> dayVolumeMap = entry.getValue();
+				switch(entry.getKey()) {
+				
+				case "EAST":
+					zoneEast.addWaterData(dayVolumeMap);
+					break;
+					
+				case "WEST":
+					zoneWest.addWaterData(dayVolumeMap);
+					break;
+					
+				case "NORTH":
+					zoneNorth.addWaterData(dayVolumeMap);
+					break;
+					
+				case "SOUTH":
+					zoneSouth.addWaterData(dayVolumeMap);
+				}
+			}
+				
+	}
+	//swabhat
 }

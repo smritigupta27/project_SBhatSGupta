@@ -193,7 +193,17 @@ public class MainWindow {
 		tabbedPane.addTab("Program", null, programSprinklerPanel, null);
 		tabbedPane.addTab("Water Report", null, checkWaterConsumptionPanel,
 				null);
+		tabbedPane.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				System.out.println("Tab: " + tabbedPane.getSelectedIndex()
+						+ "has been selected");
+				if (tabbedPane.getSelectedIndex() == 2) {
+					createWaterConsumptionPanel();
+				}
 
+			}
+
+		});
 		gardenPanel = new JPanel();
 		tabbedPane.addTab("View Garden", null, gardenPanel, null);
 		gardenPanel.setLayout(new BorderLayout(0, 0));
@@ -429,15 +439,15 @@ public class MainWindow {
 	}
 
 	public void createTemperatureConfigPanel() {
-		temperatureConfigPanel = new JPanel(new GridLayout(2,1));
-		JPanel panel1 =new JPanel(new GridLayout(1,4));
+		temperatureConfigPanel = new JPanel(new GridLayout(2, 1));
+		JPanel panel1 = new JPanel(new GridLayout(1, 4));
 		temperatureConfigPanel.setBorder(new TitledBorder("Temperature"));
 		minTempLabel = new JLabel("Min Temperature (°F): ");
-		//minTempLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		// minTempLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		panel1.add(minTempLabel);
 
 		minTempTextField = new JTextField("");
-		//minTempTextField.setHorizontalAlignment(SwingConstants.CENTER);
+		// minTempTextField.setHorizontalAlignment(SwingConstants.CENTER);
 		minTempTextField
 				.setToolTipText("Enter the Minimum temperature in degree fahrenheit");
 		minTempTextField.setColumns(10);
@@ -450,15 +460,16 @@ public class MainWindow {
 				.setToolTipText("Enter the maximum temperature in degree fahrenheit");
 		maxTempTextField.setColumns(10);
 		panel1.add(maxTempTextField);
-		
+
 		temperatureConfigPanel.add(panel1);
-		JPanel panel2=new JPanel();
-		JLabel tempInstructionLabel=new JLabel("<html><i>[Temperature range: 40 to 110]</i></html>");
-		//tempInstructionLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		JPanel panel2 = new JPanel();
+		JLabel tempInstructionLabel = new JLabel(
+				"<html><i>[Temperature range: 40 to 110]</i></html>");
+		// tempInstructionLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		panel2.add(tempInstructionLabel);
 		temperatureConfigPanel.add(panel1);
 		temperatureConfigPanel.add(panel2);
-		//temperatureConfigPanel.add(tempInstructionLabel);
+		// temperatureConfigPanel.add(tempInstructionLabel);
 	}
 
 	public void createWaterConfigPanel() {
@@ -523,37 +534,24 @@ public class MainWindow {
 	}
 
 	public void setProgramDataForZone() {
-
 		String zoneIdString = (String) zoneComboBox.getSelectedItem();
 		gardenController.setZoneForProgramming(zoneIdString);
-
 		DateFormat sdf = new SimpleDateFormat("hh:mm");
 		String startTime = startTimeTextField.getText();// "15:30:18";
 		String stopTime = stopTimeTextField.getText();
-		/*
-		 * Date beginTime = new Date(); Date endTime = new Date(); try {
-		 * beginTime = startTime != null ?sdf.parse(startTime) :
-		 * sdf.parse("10:00"); endTime = endTime != null ? sdf.parse(stopTime) :
-		 * sdf.parse("10:00"); } catch (ParseException e1) {
-		 * System.out.println("You have enters Incorrect Time");
-		 * e1.printStackTrace(); }
-		 */
-
-		gardenController.setStartTime(startTime);
-		gardenController.setStopTime(stopTime);
-
 		String minTemp = minTempTextField.getText();
 		String maxTemp = maxTempTextField.getText();
-		//if (minTemp.length() < 3 && minTemp.matches("[0-9]+")) {
-			gardenController.setMinTemp(minTemp);
-		//}
-		//if (maxTemp.matches("[0-9]+")) {
-			gardenController.setMaxTemp(maxTemp);
-		//}
-
-		String waterRate = (String) waterRateComboBox.getSelectedItem();
-		gardenController.setWaterRate(waterRate);
-
+		if (minTemp.length() < 3 && minTemp.matches("[0-9]+")) {
+			// gardenController.setMinTemp(minTemp); //swabhat
+		}
+		if (maxTemp.length() < 3 && maxTemp.matches("[0-9]+")) {
+			// gardenController.setMaxTemp(maxTemp); //swabhat
+		}
+		String wterRate = (String) waterRateComboBox.getSelectedItem();
+		gardenController.setWaterRate(wterRate);
+		// swabhat
+		gardenController.saveTimeTemperature(startTime, stopTime, minTemp,
+				maxTemp);
 		gardenController.saveProgramDataForZone();
 	}
 

@@ -84,7 +84,7 @@ public class WaterConsumptionCalculator {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			if(conn!=null)
+			if (conn != null)
 				closeConnection();
 		}// end try
 		return this.dayVolumeMapByZones;
@@ -161,6 +161,41 @@ public class WaterConsumptionCalculator {
 		}
 		return dayVolumeMap;
 
+	}
+
+	public Map<String, Map<String, Double>> insertWaterConsumptionData(
+			String zoneId, Date startDate, Date endDate, int rateOfFlow) {
+
+		try {
+			openConnection();
+			/*
+			 * java.sql.Date sqlStartDate = new java.sql.Date(startDate.);
+			 * 
+			 * java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
+			 */
+
+			java.text.SimpleDateFormat sdf =
+			new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String sqlStartDate = sdf.format(startDate);
+			String sqlEndDate = sdf.format(endDate);
+			String sqlInsertStatement = "INSERT INTO `tbl_water_consumption_zonewise` ( `zone_id`, `start_time`, `stop_time`,"
+					+ " `rate_of_water_flow`) VALUES ( '"
+					+ zoneId + "','"
+					+ sqlStartDate + "','"
+					+ sqlEndDate + "','"
+					+ rateOfFlow + "')";
+			System.out.println(sqlInsertStatement);
+			stmt.executeUpdate(sqlInsertStatement);
+			closeConnection();
+		} catch (Exception e) {
+
+			e.printStackTrace();
+
+		} finally {
+			if (conn != null)
+				closeConnection();
+		}// end try
+		return this.dayVolumeMapByZones;
 	}
 
 }
