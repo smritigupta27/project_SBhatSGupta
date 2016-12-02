@@ -26,7 +26,7 @@ public class Zone implements  ActionListener, Comparator<Zone>{
 	private Garden garden;
 	private Date startDate = null, endDate = null, sysDate = null;
 	private Map dayVolumeMap;
-	private static final int TEMP_SPRINKLER_TIME = 5000; //in miliiseconds
+	private static final int TEMP_SPRINKLER_TIME = 60000; //in miliiseconds
 	private static final int TEMP_RATE_OF_FLOW = 50;
 
 	private List<Sprinkler> zoneSprinklerList;
@@ -112,6 +112,7 @@ public class Zone implements  ActionListener, Comparator<Zone>{
 		int hr = Integer.parseInt(startHr);
 		startCal.set(Calendar.HOUR_OF_DAY, hr);
 		startCal.set(Calendar.MINUTE, Integer.parseInt(startMin));
+		startCal.set(Calendar.SECOND, 00);
 		startDate = startCal.getTime(); 
 		}
 	  
@@ -123,6 +124,7 @@ public class Zone implements  ActionListener, Comparator<Zone>{
 			Calendar endCal = Calendar.getInstance();
 			endCal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(endHr));
 			endCal.set(Calendar.MINUTE, Integer.parseInt(endMin));
+			endCal.set(Calendar.SECOND, 00);
 			endDate = endCal.getTime();
 		  }
 	 
@@ -261,8 +263,8 @@ public class Zone implements  ActionListener, Comparator<Zone>{
 			sysDate = getSysDate();
 			
 			
-			double initialDelay = 6000;//startDate.getTime() - sysDate.getTime();
-			double stopTimeDelay = 10000;// endDate.getTime() - startDate.getTime();
+			double initialDelay = startDate.getTime() - sysDate.getTime();
+			double stopTimeDelay = endDate.getTime() - startDate.getTime();
 			
 			scheduleTimer = new Timer((int) initialDelay, new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {

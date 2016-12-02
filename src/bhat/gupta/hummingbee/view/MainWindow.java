@@ -364,9 +364,10 @@ public class MainWindow {
 		durationLabel = new JLabel("Duration: ");
 		timeConfigPanel.add(durationLabel);
 
-		timeComboBox = new JComboBox(new String[] { "Week", "Day" });
+		//timeComboBox = new JComboBox(new String[] { "Week", "Day" });
 		// timeComboBox.setModel(new DefaultComboBoxModel(new String[] {"Week",
 		// "Day"}));
+		timeComboBox = new JComboBox(new String[] { "Week" });
 		timeConfigPanel.add(timeComboBox);
 
 		dayLabel = new JLabel("Day: ");

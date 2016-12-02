@@ -19,7 +19,7 @@ import java.util.Map.Entry;
 public class WaterConsumptionCalculator {
 
 	static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-	static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/db_garden_sprinkler_sbsg";
+	static final String DB_URL = "jdbc:mysql://127.0.0.1:8889/db_garden_sprinkler_sbsg";
 
 	// Database credentials
 	static final String USER = "root";
@@ -141,7 +141,7 @@ public class WaterConsumptionCalculator {
 				double elapsedTimeInHours = (d2.getTime() - d1.getTime())
 						/ (double) 3600000;
 				double volume = (double) elapsedTimeInHours
-						* rate_of_water_flow;
+						* rate_of_water_flow * 20;
 				if (dayVolumeMap.containsKey(date)) {
 					dayVolumeMap.put(date, dayVolumeMap.get(date) + volume);
 				} else {
